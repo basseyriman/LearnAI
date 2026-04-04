@@ -58,17 +58,8 @@ class ChapterGenerator {
 
     // Generate a complete chapter for any AI topic
     async generateChapter(topicTitle, childName = "Explorer") {
-        const apiKey = localStorage.getItem('openai_api_key') || '';
-
         console.log(`Generating SMART chapter for: ${topicTitle}`);
-        let chapterContent;
-
-        if (apiKey) {
-            chapterContent = await this.generateSmartContent(topicTitle, childName, apiKey);
-        } else {
-            console.warn("No OpenAI Key, falling back to template content");
-            chapterContent = await this.createTemplateContent(topicTitle, childName);
-        }
+        const chapterContent = await this.generateSmartContent(topicTitle, childName);
 
         const illustrations = await this.generateIllustrations(chapterContent, childName);
 
@@ -79,7 +70,7 @@ class ChapterGenerator {
         };
     }
 
-    async generateSmartContent(topicTitle, childName, apiKey) {
+    async generateSmartContent(topicTitle, childName) {
         const prompt = `You are an expert children's educational writer. Write a highly engaging, story-driven, interactive lesson about the AI topic: "${topicTitle}".
 The target audience is a child named ${childName}, aged 6-12. The tone should be similar to a premium Pixar movie mixed with an inspiring storybook, full of wonder and discovery, while being factually accurate about AI.
 
@@ -114,22 +105,19 @@ IMPORTANT: Return ONLY the raw JSON object. Do not wrap in markdown or include a
 CRITICAL: Do NOT include the word '(Correct)' or any other hints in the quiz options. The options should be clean so the child can learn to find the right answer.`;
 
         try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const response = await fetch('/api/openai/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini',
                     messages: [{ role: 'system', content: prompt }],
                     temperature: 0.7,
-                    response_format: { type: "json_object" }
+                    response_format: { type: 'json_object' }
                 })
             });
 
             if (!response.ok) {
-                throw new Error(`OpenAI API error: ${response.status}`);
+                throw new Error(`OpenAI proxy error: ${response.status}`);
             }
 
             const data = await response.json();
@@ -154,20 +142,10 @@ CRITICAL: Do NOT include the word '(Correct)' or any other hints in the quiz opt
 
     // Generic method to generate a short snippet of dynamic text
     async generateDynamicText(promptText) {
-        const apiKey = localStorage.getItem('openai_api_key') || '';
-
-        if (!apiKey) {
-            console.warn("No API key for dynamic text.");
-            return null;
-        }
-
         try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const response = await fetch('/api/openai/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini',
                     messages: [{ role: 'system', content: promptText }],
@@ -176,7 +154,7 @@ CRITICAL: Do NOT include the word '(Correct)' or any other hints in the quiz opt
             });
 
             if (!response.ok) {
-                throw new Error(`OpenAI API error: ${response.status}`);
+                throw new Error(`OpenAI proxy error: ${response.status}`);
             }
 
             const data = await response.json();

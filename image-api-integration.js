@@ -1,18 +1,15 @@
 // Enhanced Image Generation System with Real API Integration
 class EnhancedImageGenerator {
     constructor() {
-        this.apiKey = localStorage.getItem('openai_api_key') || '';
         this.apiProvider = localStorage.getItem('image_api_provider') || 'openai';
         this.fallbackImages = this.createFallbackImages();
         this.humanityPromptTemplates = this.createHumanityPrompts();
     }
 
-    // Set API configuration
-    setAPIConfig(provider, apiKey) {
+    // Set image provider (DALL-E uses OPENAI_API_KEY on the server — run `npm start`)
+    setAPIConfig(provider) {
         this.apiProvider = provider;
-        this.apiKey = apiKey;
         localStorage.setItem('image_api_provider', provider);
-        localStorage.setItem('openai_api_key', apiKey);
     }
 
     // Generate human-relatable, child-friendly image with enhanced prompts
@@ -126,22 +123,15 @@ class EnhancedImageGenerator {
 
     // Generate image using OpenAI DALL-E API via CORS proxy
     async generateWithOpenAI(prompt, section) {
-        if (!this.apiKey) {
-            console.warn('OpenAI API key not provided, falling back to placeholder');
-            return await this.generatePlaceholderImage(prompt, section);
-        }
-
         try {
-            console.log('Generating image with OpenAI DALL-E 3 via Proxy...', { prompt: prompt.substring(0, 100) + '...', section });
+            console.log('Generating image with OpenAI DALL-E 3 via server...', { prompt: prompt.substring(0, 100) + '...', section });
 
-            // Call our local CORS proxy instead of OpenAI directly to avoid browser blocks
             const response = await fetch('/api/openai/images', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    apiKey: this.apiKey,
                     model: 'dall-e-3',
                     prompt: prompt,
                     size: '1024x1024'
@@ -427,13 +417,13 @@ class EnhancedImageGenerator {
 
     // Check if API is configured
     isAPIConfigured() {
-        return this.apiProvider !== 'placeholder' && this.apiKey.length > 0;
+        return this.apiProvider === 'openai';
     }
 
     // Get available providers
     getAvailableProviders() {
         return [
-            { id: 'openai', name: 'OpenAI DALL-E', requiresKey: true },
+            { id: 'openai', name: 'OpenAI DALL-E (server key)', requiresKey: false },
             { id: 'placeholder', name: 'Enhanced Placeholders', requiresKey: false }
         ];
     }
@@ -473,15 +463,12 @@ class APIConfigurationUI {
                         <label>Choose Image Provider:</label>
                         <select id="provider-select">
                             <option value="placeholder">Enhanced Placeholders (Free)</option>
-                            <option value="openai">OpenAI DALL-E (Requires API Key)</option>
+                            <option value="openai">OpenAI DALL-E (uses server <code>.env</code> key)</option>
                         </select>
                     </div>
-                    
-                    <div class="api-key-section" id="api-key-section" style="display: none;">
-                        <label for="api-key-input">OpenAI API Key:</label>
-                        <input type="password" id="api-key-input" placeholder="sk-..." />
-                        <small>Your API key is stored locally and never shared.</small>
-                    </div>
+                    <p class="voice-helper-text" style="margin-top: 10px; font-size: 12px; opacity: 0.85;">
+                        DALL-E requires <code>npm start</code> and <code>OPENAI_API_KEY</code> in <code>.env</code> — explorers never type a key.
+                    </p>
                     
                     <div class="preview-section">
                         <h4>What you'll get:</h4>
@@ -500,22 +487,8 @@ class APIConfigurationUI {
             </div>
         `;
 
-        // Add event listeners
         const providerSelect = this.modal.querySelector('#provider-select');
         providerSelect.value = this.imageGenerator.apiProvider;
-        providerSelect.addEventListener('change', (e) => {
-            const apiKeySection = this.modal.querySelector('#api-key-section');
-            apiKeySection.style.display = e.target.value === 'openai' ? 'block' : 'none';
-        });
-
-        // Set initial API key if available
-        const apiKeyInput = this.modal.querySelector('#api-key-input');
-        apiKeyInput.value = this.imageGenerator.apiKey;
-
-        // Show API key section if OpenAI is selected
-        if (this.imageGenerator.apiProvider === 'openai') {
-            this.modal.querySelector('#api-key-section').style.display = 'block';
-        }
 
         document.body.appendChild(this.modal);
     }
@@ -523,18 +496,11 @@ class APIConfigurationUI {
     // Save configuration
     saveConfiguration() {
         const provider = this.modal.querySelector('#provider-select').value;
-        const apiKey = this.modal.querySelector('#api-key-input').value;
 
-        if (provider === 'openai' && !apiKey.trim()) {
-            alert('Please enter your OpenAI API key or select Enhanced Placeholders.');
-            return;
-        }
+        this.imageGenerator.setAPIConfig(provider);
 
-        this.imageGenerator.setAPIConfig(provider, apiKey);
-
-        // Show success message
         const message = provider === 'openai'
-            ? 'OpenAI DALL-E configured! You\'ll now get AI-generated illustrations.'
+            ? 'OpenAI DALL-E selected. Ensure the server is running with OPENAI_API_KEY in .env.'
             : 'Enhanced placeholders configured! You\'ll get beautiful placeholder images.';
 
         app.showNotification(message, 'success');

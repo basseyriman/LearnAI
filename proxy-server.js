@@ -1,33 +1,80 @@
-// CORS Proxy Server for OpenAI Image Generation
-// This server handles OpenAI API calls to bypass browser CORS restrictions
+// Serves the app and proxies OpenAI calls using OPENAI_API_KEY from .env (never exposed to the browser).
 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
-// Enable CORS for all routes
 app.use(cors());
-app.use(express.json());
-
-// Serve static frontend files from the same directory
+app.use(express.json({ limit: '2mb' }));
 app.use(express.static(__dirname));
 
-// Health check endpoint
+function openaiNotConfigured(res) {
+    return res.status(503).json({
+        error: 'OpenAI is not configured on this server. Set OPENAI_API_KEY in a .env file and restart (see .env.example).'
+    });
+}
+
 app.get('/health', (req, res) => {
-    res.json({ status: 'OK', message: 'CORS Proxy Server is running' });
+    res.json({ status: 'OK', message: 'LearnAI server is running' });
 });
 
-// OpenAI Image Generation Proxy Endpoint
-app.post('/api/openai/images', async (req, res) => {
-    try {
-        const { apiKey, prompt, model = 'dall-e-3', size = '1024x1024' } = req.body;
+app.get('/api/openai/status', (req, res) => {
+    res.json({ configured: Boolean(OPENAI_KEY && OPENAI_KEY.trim()) });
+});
 
-        if (!apiKey) {
-            return res.status(400).json({ error: 'API key is required' });
+app.post('/api/openai/chat', async (req, res) => {
+    if (!OPENAI_KEY) return openaiNotConfigured(res);
+    try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${OPENAI_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(req.body)
+        });
+        const text = await response.text();
+        res.status(response.status).type('application/json').send(text);
+    } catch (error) {
+        console.error('OpenAI chat proxy error:', error);
+        res.status(500).json({ error: 'Internal server error', message: error.message });
+    }
+});
+
+app.post('/api/openai/audio/speech', async (req, res) => {
+    if (!OPENAI_KEY) return openaiNotConfigured(res);
+    try {
+        const response = await fetch('https://api.openai.com/v1/audio/speech', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${OPENAI_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(req.body)
+        });
+        if (!response.ok) {
+            const errText = await response.text();
+            return res.status(response.status).type('application/json').send(errText);
         }
+        const buffer = await response.buffer();
+        const ct = response.headers.get('content-type') || 'audio/mpeg';
+        res.set('Content-Type', ct);
+        res.send(buffer);
+    } catch (error) {
+        console.error('OpenAI speech proxy error:', error);
+        res.status(500).json({ error: 'Internal server error', message: error.message });
+    }
+});
+
+app.post('/api/openai/images', async (req, res) => {
+    if (!OPENAI_KEY) return openaiNotConfigured(res);
+    try {
+        const { prompt, model = 'dall-e-3', size = '1024x1024' } = req.body;
 
         if (!prompt) {
             return res.status(400).json({ error: 'Prompt is required' });
@@ -39,20 +86,19 @@ app.post('/api/openai/images', async (req, res) => {
             size
         });
 
-        // Make the actual API call to OpenAI
         const response = await fetch('https://api.openai.com/v1/images/generations', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
+                Authorization: `Bearer ${OPENAI_KEY}`,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: model,
-                prompt: prompt,
+                model,
+                prompt,
                 n: 1,
-                size: size,
-                quality: "standard",
-                style: "vivid"
+                size,
+                quality: 'standard',
+                style: 'vivid'
             })
         });
 
@@ -72,14 +118,12 @@ app.post('/api/openai/images', async (req, res) => {
         const data = await response.json();
         console.log('OpenAI image generated successfully via proxy!');
 
-        // Return the image data
         res.json({
             success: true,
-            data: data,
+            data,
             url: data.data[0].url,
             provider: 'openai-proxy'
         });
-
     } catch (error) {
         console.error('Proxy server error:', error);
         res.status(500).json({
@@ -89,16 +133,12 @@ app.post('/api/openai/images', async (req, res) => {
     }
 });
 
-// Start the server
 app.listen(PORT, () => {
-    console.log(`🚀 CORS Proxy Server running on http://localhost:${PORT}`);
-    console.log(`📡 OpenAI Image API endpoint: http://localhost:${PORT}/api/openai/images`);
-    console.log(`💡 Health check: http://localhost:${PORT}/health`);
-    console.log('');
-    console.log('🔧 To use this proxy:');
-    console.log('1. Install dependencies: npm install express cors node-fetch');
-    console.log('2. Start server: node proxy-server.js');
-    console.log('3. Configure your app to use http://localhost:3001/api/openai/images');
+    console.log(`LearnAI server: http://localhost:${PORT}`);
+    console.log(`Health: http://localhost:${PORT}/health`);
+    if (!OPENAI_KEY) {
+        console.warn('⚠️  OPENAI_API_KEY is not set — AI features will return 503 until you add .env');
+    }
 });
 
 module.exports = app;

@@ -21,8 +21,7 @@ class VoiceSystem {
         this.speechQueue = [];
         this.shouldAbortSequences = false;
 
-        // OpenAI Setup
-        this.apiKey = localStorage.getItem('openai_api_key') || '';
+        // TTS goes through /api/openai/audio/speech (server uses OPENAI_API_KEY from .env)
         this.activeVoice = 'echo'; // default OpenAI voice
 
         // Settings
@@ -149,8 +148,8 @@ class VoiceSystem {
 
     // Text-to-Speech: Make the AI speak using OpenAI
     async speak(text, type = 'info', priority = 'normal', characterName = '') {
-        if (!this.settings.ttsEnabled || !this.apiKey) {
-            console.log('🔊 TTS disabled or API key missing');
+        if (!this.settings.ttsEnabled) {
+            console.log('🔊 TTS disabled');
             return Promise.resolve();
         }
 
@@ -171,12 +170,9 @@ class VoiceSystem {
             console.log(`🔊 OpenAI generating speech (${this.activeVoice}):`, text.substring(0, 50) + '...');
 
             try {
-                const response = await fetch('https://api.openai.com/v1/audio/speech', {
+                const response = await fetch('/api/openai/audio/speech', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${this.apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: 'tts-1',
                         voice: this.activeVoice,
