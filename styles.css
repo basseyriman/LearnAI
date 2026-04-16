@@ -43,6 +43,10 @@ body {
     min-height: 80vh;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .screen.active {
     display: block;
     animation: premiumFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -70,10 +74,10 @@ body {
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 40px;
-    padding: 80px 40px;
+    padding: 40px 40px;
     box-shadow: var(--shadow);
     max-width: 800px;
-    margin: 60px auto;
+    margin: 30px auto;
     position: relative;
     overflow: hidden;
 }
@@ -105,7 +109,7 @@ body {
 .ai-character {
     margin: 40px 0;
     position: relative;
-    height: 250px;
+    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -793,32 +797,46 @@ body {
     transition: all 0.3s;
 }
 
-/* Robot Gamification Mechanics */
+/* Robot Gamification Mechanics - Professional Badge Shelf */
 .rewards-container {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    margin-top: 15px;
-    min-height: 50px;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+    padding: 15px 25px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 100px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 50;
+    pointer-events: auto;
 }
 
 .robot-badge {
-    width: 45px;
-    height: 45px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #6c5ce7;
-    box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+    background: white;
+    padding: 3px;
+    border: 3px solid var(--neon-cyan);
+    box-shadow: 0 5px 15px rgba(0, 206, 201, 0.3);
     object-fit: contain;
-    padding: 2px;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: help;
+    position: relative;
     animation: floating 4s ease-in-out infinite;
 }
 
 .robot-badge:hover {
-    transform: scale(1.2) rotate(5deg);
+    transform: scale(1.3) translateY(-5px);
     z-index: 10;
+    box-shadow: 0 10px 25px rgba(0, 206, 201, 0.5);
+    border-color: #ffffff;
 }
 
 .robot-badge.new-unlock {

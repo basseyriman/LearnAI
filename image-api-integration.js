@@ -181,7 +181,12 @@ class EnhancedImageGenerator {
         const topicPalettes = {
             space: ['#1a1a2e', '#16213e'],
             security: ['#2c3e50', '#34495e'],
+            facial: ['#2d3436', '#636e72'],
             health: ['#27ae60', '#2ecc71'],
+            nlp: ['#0984e3', '#74b9ff'], // Blue/Cyan for language
+            lang: ['#0984e3', '#74b9ff'],
+            recommendation: ['#6c5ce7', '#a29bfe'], // Purple
+            neural: ['#d63031', '#fab1a0'], // Red/Neural
             art: ['#8e44ad', '#9b59b6'],
             robotics: ['#2980b9', '#3498db'],
             nature: ['#16a085', '#1abc9c'],
@@ -192,8 +197,11 @@ class EnhancedImageGenerator {
         let palette = topicPalettes.default;
 
         if (concept.includes('space') || concept.includes('star')) palette = topicPalettes.space;
-        else if (concept.includes('security') || concept.includes('cyber')) palette = topicPalettes.security;
+        else if (concept.includes('security') || concept.includes('cyber') || concept.includes('face') || concept.includes('facial')) palette = topicPalettes.security;
         else if (concept.includes('health') || concept.includes('doctor') || concept.includes('medicine')) palette = topicPalettes.health;
+        else if (concept.includes('nlp') || concept.includes('language') || concept.includes('speech')) palette = topicPalettes.nlp;
+        else if (concept.includes('recommendation') || concept.includes('suggestion')) palette = topicPalettes.recommendation;
+        else if (concept.includes('neural') || concept.includes('brain')) palette = topicPalettes.neural;
         else if (concept.includes('art') || concept.includes('creative')) palette = topicPalettes.art;
         else if (concept.includes('robot')) palette = topicPalettes.robotics;
         else if (concept.includes('environment') || concept.includes('planet')) palette = topicPalettes.nature;
@@ -253,8 +261,8 @@ class EnhancedImageGenerator {
             ctx.beginPath();
             ctx.arc(320, 80, 40, 0, Math.PI * 2);
             ctx.fill();
-        } else if (concept.includes('security') || concept.includes('cyber')) {
-            // Draw shield-like shapes
+        } else if (concept.includes('security') || concept.includes('cyber') || concept.includes('face') || concept.includes('facial')) {
+            // Draw shield or identity scan
             ctx.beginPath();
             ctx.moveTo(200, 50);
             ctx.lineTo(250, 80);
@@ -263,10 +271,26 @@ class EnhancedImageGenerator {
             ctx.lineTo(150, 80);
             ctx.closePath();
             ctx.fill();
+            if (concept.includes('face')) {
+                ctx.strokeRect(170, 90, 60, 60); // Identity box
+            }
         } else if (concept.includes('health')) {
             // Draw heart or plus
             ctx.font = '60px Arial';
             ctx.fillText('❤️', 300, 100);
+        } else if (concept.includes('nlp') || concept.includes('language') || concept.includes('speech') || concept.includes('chat')) {
+            // Draw chat bubbles
+            ctx.beginPath();
+            ctx.arc(100, 80, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(140, 120, 25, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (concept.includes('recommendation') || concept.includes('suggestion')) {
+            // Draw sparkles/stars
+            for(let i=0; i<5; i++) {
+                ctx.fillText('✨', 50 + i*70, 80 + (i%2)*20);
+            }
         } else {
             // Fallback to section elements
             this.addDecorativeElements(ctx, section);

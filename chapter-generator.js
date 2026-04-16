@@ -102,9 +102,7 @@ Return the result EXACTLY as a valid JSON object with the following structure:
 }
 
 IMPORTANT: Return ONLY the raw JSON object. Do not wrap in markdown or include any other text. Avoid using quotes inside string values that would break the JSON parsing.
-CRITICAL: Do NOT include the word '(Correct)' or any other hints in the quiz options.
-CRITICAL: The "answer" field MUST exactly match the full string of one of the items in the "options" array, or be exactly a single capital letter (A, B, C, or D).
-The options should be clean so the child can learn to find the right answer.`;
+CRITICAL: Do NOT include the word '(Correct)' or any other hints in the quiz options. The 'answer' string must EXACTLY match one of the strings in the 'options' array (including spaces and case) so it can be verified correctly. Do not use choice letters like 'A)' or '1.' inside the option strings unless they are part of the concept. Your output must be pure JSON.`;
 
         try {
             const response = await fetch('/api/openai/chat', {

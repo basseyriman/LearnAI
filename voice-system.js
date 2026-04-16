@@ -147,7 +147,7 @@ class VoiceSystem {
     }
 
     // Text-to-Speech: Make the AI speak using OpenAI
-    async speak(text, type = 'info', priority = 'normal', characterName = '', onStart = null) {
+    async speak(text, type = 'info', priority = 'normal', characterName = '') {
         if (!this.settings.ttsEnabled) {
             console.log('🔊 TTS disabled');
             return Promise.resolve();
@@ -194,6 +194,13 @@ class VoiceSystem {
 
                 this.currentAudio = new Audio(audioUrl);
 
+                // Add event for synchronization with text tying
+                this.currentAudio.addEventListener('playing', () => {
+                    window.dispatchEvent(new CustomEvent('ai-speech-started', {
+                        detail: { audioUrl, text }
+                    }));
+                });
+
                 // Volume controls based on type
                 if (type === 'error' || type === 'warning') {
                     this.currentAudio.volume = Math.max(0.3, this.settings.voiceVolume - 0.2);
@@ -205,6 +212,7 @@ class VoiceSystem {
                     this.isSpeaking = false;
                     this.updateMascotsTalking(false);
                     URL.revokeObjectURL(audioUrl);
+                    window.dispatchEvent(new CustomEvent('ai-speech-ended'));
                     resolve();
                     this.processQueue();
                 };
@@ -221,10 +229,6 @@ class VoiceSystem {
                 // Play the audio!
                 if (!this.shouldAbortSequences) {
                     try {
-                        // Notify when audio actually starts playing
-                        this.currentAudio.onplay = () => {
-                            if (onStart) onStart(this.currentAudio.duration);
-                        };
                         await this.currentAudio.play();
                     } catch (playError) {
                         console.warn('🔊 Auto-play prevented by browser. User interaction required first.', playError.message || playError.name);
