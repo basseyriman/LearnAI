@@ -325,6 +325,109 @@ const aiChapters = [
             "per_quiz_answer": 10,
             "chapter_completion_bonus": 50
         }
+    },
+    {
+        "chapter_title": "AI in Space Exploration - To the Stars!",
+        "character": "Astro Ace",
+        "character_image": "assets/thumbnails/ai_space.png",
+        "story": "High above our world, the silent stars were calling. Maya and Alex looked through a giant telescope and saw something moving fast—it was a smart Mars Rover! Suddenly, Astro Ace appeared in a brilliant suit of stardust. 'Greetings, fellow explorers!' Ace said. 'I use AI to navigate across distant planets, helping rovers find water and special rocks. I'm like a super-navigator for the universe!'",
+        "lesson": "AI helps us explore the unknown! It guides space rovers and satellites to stay safe and send back amazing secrets from the deepest parts of space.",
+        "activity": "Help Astro Ace land the rover! Click the 'Thrust' button at the right time to guide the rover safely onto the red planet. This is how AI makes quick decisions to land spaceships.",
+        "fun_fact": "AI controllers on the Mars Perseverance Rover can plan their own path around dangerous rocks without waiting for humans to tell them what to do!",
+        "mini_quiz": [
+            {
+                "question": "How does AI help in space?",
+                "options": ["It cooks food for astronauts", "It guides rovers and satellites safely", "It builds extra stars", "It paints the moon red"],
+                "answer": "It guides rovers and satellites safely"
+            },
+            {
+                "question": "What is the name of the rover that uses AI to drive on Mars?",
+                "options": ["Speedy", "Perseverance", "Moonwalker", "Spacebus"],
+                "answer": "Perseverance"
+            }
+        ],
+        "illustrations": [
+            {
+                "section": "story",
+                "imageUrl": "assets/thumbnails/ai_space.png",
+                "description": "Astro Ace showing a glowing map of the solar system."
+            },
+            {
+                "section": "lesson",
+                "description": "A cartoon rover with AI sensors exploring a red rocky planet."
+            }
+        ],
+        "completion_badge": "Stellar Navigator Badge",
+        "score_award": {
+            "per_quiz_answer": 15,
+            "chapter_completion_bonus": 75
+        }
+    },
+    {
+        "chapter_title": "Neural Networks - How AI Learns",
+        "character": "Layer Leo",
+        "character_image": "assets/thumbnails/neural_networks.png",
+        "story": "Maya wondered, 'How does a robot actually think?' Suddenly, Layer Leo appeared, surrounded by glowing lines that looked like a digital web. 'Think of me like a team of friends!' Leo explained. 'My Neural Network has many layers. Each layer learns a small part of a puzzle, and when they work together, they can recognize anything—like a cat, a car, or even your favorite song!'",
+        "lesson": "Neural Networks are like a brain for AI! They use many layers of 'digital neurons' to learn patterns from information, just like your brain learns new things every day.",
+        "activity": "Connect the dots! Draw lines between the glowing circles to help the information travel through the network layers. This is how AI processes data!",
+        "fun_fact": "Digital neural networks were inspired by the way the billions of neurons in your own human brain work together to help you think and feel!",
+        "mini_quiz": [
+            {
+                "question": "What are Neural Networks?",
+                "options": ["A type of computer screen", "A way for computers to learn patterns like a brain", "A network of wires under the ocean", "A game about spiders"],
+                "answer": "A way for computers to learn patterns like a brain"
+            },
+            {
+                "question": "True or False: Neural Networks are inspired by the human brain.",
+                "options": ["True", "False"],
+                "answer": "True"
+            }
+        ],
+        "illustrations": [
+            {
+                "section": "story",
+                "imageUrl": "assets/thumbnails/neural_networks.png",
+                "description": "Layer Leo connecting different layers of a glowing network."
+            }
+        ],
+        "completion_badge": "Neural Network Architect Badge",
+        "score_award": {
+            "per_quiz_answer": 15,
+            "chapter_completion_bonus": 75
+        }
+    },
+    {
+        "chapter_title": "AI & Planet Earth - Protecting Our Home",
+        "character": "Green Gaia",
+        "character_image": "assets/thumbnails/ai_planet.png",
+        "story": "The forest was whispering, and Maya and Alex wanted to help. Green Gaia, a robot with leaf-green patterns and a heartbeat like a soft drum, appeared. 'I use AI to listen to the Earth!' Gaia said. 'I can detect when trees are in danger or track rare animals to keep them safe. I help humans be better guardians of our beautiful planet.'",
+        "lesson": "AI helps protect nature! By analyzing weather and tracking wildlife, it gives us the smart tools we need to keep the world healthy and green for everyone.",
+        "activity": "Protect the animals! Move the AI sensor to track the movement of a family of elephants through the jungle. This helps scientists protect them from danger.",
+        "fun_fact": "Some AI systems can listen to the sounds of the ocean and identify the 'songs' of different whales from thousands of miles away!",
+        "mini_quiz": [
+            {
+                "question": "How can AI help the environment?",
+                "options": ["By tracking rare animals and protecting them", "By building more concrete buildings", "By turning off the sun", "By making the oceans salty"],
+                "answer": "By tracking rare animals and protecting them"
+            },
+            {
+                "question": "True or False: AI can detect if forests are in danger.",
+                "options": ["True", "False"],
+                "answer": "True"
+            }
+        ],
+        "illustrations": [
+            {
+                "section": "story",
+                "imageUrl": "assets/thumbnails/ai_planet.png",
+                "description": "Green Gaia surrounded by digital representations of animals and plants."
+            }
+        ],
+        "completion_badge": "Guardian of Gaia Badge",
+        "score_award": {
+            "per_quiz_answer": 15,
+            "chapter_completion_bonus": 75
+        }
     }
 ];
 

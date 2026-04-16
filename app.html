@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young AI Explorers</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Theme Settings Button -->
+    <button class="settings-btn" onclick="themeSettings.showThemeModal()"
+        title="Theme & Appearance Settings">🎨</button>
+
+    <div class="app-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="welcome-content">
+                <h1 class="app-title">Young AI Explorers</h1>
+                <div class="ai-character">
+                    <img id="mascot-img" src="assets/characters/robo_prime.png" alt="Robo Prime" class="character-img">
+                    <div class="voice-visualizer" id="welcome-visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+                <div class="name-input-section">
+                    <label for="child-name">What's your name, Explorer?</label>
+                    <input type="text" id="child-name" placeholder="Enter your name here..." maxlength="20">
+                    <button id="start-adventure" class="primary-btn">Start My Adventure! 🚀</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Greeting Screen -->
+        <div id="greeting-screen" class="screen">
+            <div class="greeting-content">
+                <div class="ai-character">
+                    <img id="greeting-character-img" src="assets/characters/robo_prime.png" alt="Robo Prime"
+                        class="character-img">
+                    <div class="voice-visualizer" id="greeting-visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+                <div class="speech-bubble">
+                    <p id="greeting-text"></p>
+                </div>
+                <button id="continue-to-menu" class="primary-btn">Let's Explore! 🎯</button>
+            </div>
+        </div>
+
+        <!-- Main Menu Screen -->
+        <div id="menu-screen" class="screen">
+            <div class="menu-header">
+                <h2>Choose Your AI Adventure <span class="unlimited-badge">UNLIMITED TOPICS!</span></h2>
+                <div class="player-info">
+                    <span id="player-name"></span> | Score: <span id="total-score">0</span> points
+                    <span class="topic-counter" id="topic-counter">30+ Topics Available</span>
+                </div>
+                <div class="rewards-container" id="rewards-container">
+                    <!-- Robot badges will be injected here -->
+                </div>
+            </div>
+            <div class="chapters-grid" id="chapters-grid">
+                <!-- Chapters will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Chapter Screen -->
+        <div id="chapter-screen" class="screen">
+            <div class="chapter-header">
+                <div class="header-top">
+                    <button id="back-to-menu" class="back-btn">← Back</button>
+                    <img id="chapter-character-img" src="assets/characters/robo_prime.png" alt="AI Buddy"
+                        class="header-character-img">
+                    <h2 id="chapter-title"></h2>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="chapter-progress"></div>
+                </div>
+            </div>
+
+            <div class="chapter-content">
+                <!-- Story Section -->
+                <div class="section" id="story-section">
+                    <h3>📖 Story Time</h3>
+                    <div class="illustration-placeholder" id="story-illustration">
+                        <div class="illustration-text">Story Illustration</div>
+                    </div>
+                    <div class="content-text" id="story-text"></div>
+                    <button class="section-btn" onclick="nextSection()">Continue to Lesson 📚</button>
+                </div>
+
+                <!-- Lesson Section -->
+                <div class="section hidden" id="lesson-section">
+                    <h3>📚 What We Learn</h3>
+                    <div class="illustration-placeholder" id="lesson-illustration">
+                        <div class="illustration-text">Lesson Illustration</div>
+                    </div>
+                    <div class="content-text lesson-highlight" id="lesson-text"></div>
+                    <button class="section-btn" onclick="nextSection()">Try the Activity 🎮</button>
+                </div>
+
+                <!-- Activity Section -->
+                <div class="section hidden" id="activity-section">
+                    <h3>🎮 Fun Activity</h3>
+                    <div class="illustration-placeholder" id="activity-illustration">
+                        <div class="illustration-text">Activity Illustration</div>
+                    </div>
+                    <div class="content-text" id="activity-text"></div>
+                    <div class="activity-area" id="activity-area">
+                        <!-- Interactive activity will be loaded here -->
+                    </div>
+                    <button class="section-btn" onclick="nextSection()">Learn a Fun Fact 🤯</button>
+                </div>
+
+                <!-- Fun Fact Section -->
+                <div class="section hidden" id="funfact-section">
+                    <h3>🤯 Amazing Fact</h3>
+                    <div class="illustration-placeholder" id="funfact-illustration">
+                        <div class="illustration-text">Fun Fact Illustration</div>
+                    </div>
+                    <div class="content-text fun-fact-highlight" id="funfact-text"></div>
+                    <button class="section-btn" onclick="nextSection()">Take the Quiz 🧠</button>
+                </div>
+
+                <!-- Quiz Section -->
+                <div class="section hidden" id="quiz-section">
+                    <h3>🧠 Mini Quiz</h3>
+                    <div class="illustration-placeholder" id="quiz-illustration">
+                        <div class="illustration-text">Quiz Illustration</div>
+                    </div>
+                    <div class="quiz-container" id="quiz-container">
+                        <!-- Quiz questions will be loaded here -->
+                    </div>
+                    <div class="quiz-results hidden" id="quiz-results">
+                        <h4>Quiz Complete!</h4>
+                        <p id="quiz-score"></p>
+                        <button class="section-btn" onclick="completeChapter()">Get My Badge! 🏆</button>
+                    </div>
+                </div>
+
+                <!-- Completion Section -->
+                <div class="section hidden" id="completion-section">
+                    <h3>🏆 Chapter Complete!</h3>
+                    <div class="badge-container">
+                        <div class="completion-badge" id="completion-badge">
+                            <img id="completion-badge-img" src=""
+                                style="width: 120px; height: 120px; display: none; margin: 0 auto 15px auto; filter: drop-shadow(0 0 15px rgba(255,215,0,0.8)); object-fit: cover; border-radius: 20px; border: 3px solid gold;"
+                                alt="Earned Badge" />
+                            <div id="completion-badge-emoji"
+                                style="font-size: 4em; display: none; margin: 0 auto 15px auto; filter: drop-shadow(0 0 15px rgba(255,215,0,0.8));">
+                            </div>
+                            <div class="badge-icon" id="completion-trophy">🏆</div>
+                            <div class="badge-text" id="badge-text"></div>
+                        </div>
+                    </div>
+                    <div class="score-summary">
+                        <p>Chapter Score: <span id="chapter-score">0</span> points</p>
+                        <p>Total Score: <span id="updated-total-score">0</span> points</p>
+                    </div>
+                    <button class="primary-btn" onclick="returnToMenu()">Choose Next Adventure 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chapters-data.js?v=11"></script>
+    <script src="chapter-generator.js?v=11"></script>
+    <script src="image-api-integration.js?v=11"></script>
+    <script src="voice-system.js?v=11"></script>
+    <script src="theme-settings.js?v=11"></script>
+    <script src="app.js?v=13"></script>
+
+    <!-- Theme Settings Modal -->
+    <div id="theme-modal" class="modal hidden">
+        <div class="modal-content theme-modal-content">
+            <div class="modal-header">
+                <h3>🎨 Theme & Appearance</h3>
+                <button class="modal-close" onclick="themeSettings.closeThemeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="theme-section">
+                    <h4>🌙 Theme Mode</h4>
+                    <div class="theme-options">
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="light" checked>
+                            <span class="theme-preview light-theme">☀️ Light Mode</span>
+                        </label>
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="dark">
+                            <span class="theme-preview dark-theme">🌙 Dark Mode</span>
+                        </label>
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="auto">
+                            <span class="theme-preview auto-theme">🔄 Auto (System)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="theme-section">
+                    <h4>🎨 Background Colors</h4>
+                    <div class="color-options">
+                        <button class="color-option" data-color="default"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                            title="Default Blue"></button>
+                        <button class="color-option" data-color="green"
+                            style="background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)"
+                            title="Nature Green"></button>
+                        <button class="color-option" data-color="purple"
+                            style="background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%)"
+                            title="Magic Purple"></button>
+                        <button class="color-option" data-color="orange"
+                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                            title="Sunset Orange"></button>
+                        <button class="color-option" data-color="teal"
+                            style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+                            title="Ocean Teal"></button>
+                        <button class="color-option" data-color="pink"
+                            style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+                            title="Candy Pink"></button>
+                    </div>
+                </div>
+
+                <div class="theme-section">
+                    <h4>✨ Fun Effects</h4>
+                    <div class="effect-options">
+                        <label class="effect-option">
+                            <input type="checkbox" id="particles-effect" checked>
+                            <span>🌟 Floating Particles</span>
+                        </label>
+                        <label class="effect-option">
+                            <input type="checkbox" id="animations-effect" checked>
+                            <span>🎭 Smooth Animations</span>
+                        </label>
+                        <label class="effect-option">
+                            <input type="checkbox" id="sounds-effect">
+                            <span>🔊 Sound Effects</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="voice-toggle-section">
+                    <h4>🤖 Voice Assistant</h4>
+                    <div class="voice-toggle">
+                        <input type="checkbox" id="voice-input-effect" checked>
+                        <span>🗣️ Enable Voice Assistant to Help You Learn</span>
+                    </div>
+                    <div class="voice-helper-text" style="margin-top: 8px; font-size: 11px;">
+                        Let your AI act like a study buddy who reads all content out loud to help with the learning
+                        process
+                    </div>
+                    <div class="voice-selection" style="margin-top: 15px;">
+                        <label for="voice-preference" style="display: block; margin-bottom: 5px;"><strong>AI Guide
+                                Voice:</strong></label>
+                        <select id="voice-preference" class="settings-select"
+                            style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); font-family: inherit; background: white;">
+                            <option value="auto">Auto (Character Specific)</option>
+                            <option value="alloy">Alloy (Friendly & Neutral)</option>
+                            <option value="echo">Echo (Warm & Balanced)</option>
+                            <option value="fable">Fable (Animated & Expressive)</option>
+                            <option value="onyx">Onyx (Deep & Authoritative)</option>
+                            <option value="nova">Nova (Energetic & Professional)</option>
+                            <option value="shimmer">Shimmer (Clear & Bright)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="themeSettings.resetToDefault()">Reset to Default</button>
+                <button class="btn-primary" onclick="themeSettings.applyTheme()">Apply Changes</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

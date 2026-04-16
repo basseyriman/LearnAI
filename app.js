@@ -10,7 +10,7 @@ class AILearningApp {
         this.completedChapters = new Set();
         this.unlockedRobots = new Set();
         this.quizAnswers = [];
-        this.sections = ['story', 'lesson', 'activity', 'funfact', 'quiz'];
+        this.sections = ['story', 'lesson', 'activity', 'funfact', 'quiz', 'completion'];
         this.chapterGenerator = new ChapterGenerator();
         this.generatedChapters = new Map();
         this.isGeneratingChapter = false;
@@ -93,9 +93,19 @@ class AILearningApp {
             console.error("Failed to generate dynamic greeting:", e);
         }
 
-        this.typeText('greeting-text', text, 20); // Faster typing too
-        if (window.voiceSystem) {
-            window.voiceSystem.speak(text, 'greeting');
+        this.typeSyncWithVoice(text, 'greeting-text');
+    }
+
+    typeSyncWithVoice(displayText, elementId, speechText = null) {
+        const textToSpeak = speechText || displayText;
+        if (window.voiceSystem && window.voiceSystem.settings.ttsEnabled) {
+            // Start speaking, and when audio starts, sync typing to duration
+            window.voiceSystem.speak(textToSpeak, 'chat', 'normal', this.currentChapter?.character, (duration) => {
+                this.typeText(elementId, displayText, duration, true);
+            });
+        } else {
+            // Fallback: regular typing if voice is off
+            this.typeText(elementId, displayText, 30);
         }
     }
 
@@ -600,36 +610,28 @@ class AILearningApp {
 
         switch (sectionName) {
             case 'story':
-                const storyElem = document.getElementById('story-text');
                 const storyText = this.currentChapter.story || '';
-                if (storyElem) storyElem.textContent = storyText;
+                this.typeSyncWithVoice(storyText, 'story-text');
                 this.loadIllustration('story-illustration', illustrations[0]);
-                if (window.voiceSystem) window.voiceSystem.speak(storyText, 'info', 'normal', this.currentChapter.character);
                 break;
 
             case 'lesson':
-                const lessonElem = document.getElementById('lesson-text');
                 const lessonText = this.currentChapter.lesson || '';
-                if (lessonElem) lessonElem.textContent = lessonText;
+                this.typeSyncWithVoice(lessonText, 'lesson-text');
                 this.loadIllustration('lesson-illustration', illustrations[1]);
-                if (window.voiceSystem) window.voiceSystem.speak(lessonText, 'info', 'normal', this.currentChapter.character);
                 break;
 
             case 'activity':
-                const activityElem = document.getElementById('activity-text');
                 const activityText = this.currentChapter.activity || '';
-                if (activityElem) activityElem.textContent = activityText;
+                this.typeSyncWithVoice(activityText, 'activity-text');
                 this.loadIllustration('activity-illustration', illustrations[2]);
                 this.createActivityInterface();
-                if (window.voiceSystem) window.voiceSystem.speak(activityText, 'info', 'normal', this.currentChapter.character);
                 break;
 
             case 'funfact':
-                const ffElem = document.getElementById('funfact-text');
                 const ffText = this.currentChapter.fun_fact || '';
-                if (ffElem) ffElem.textContent = ffText;
+                this.typeSyncWithVoice(ffText, 'funfact-text', `Did you know? ${ffText}`);
                 this.loadIllustration('funfact-illustration', illustrations[3]);
-                if (window.voiceSystem) window.voiceSystem.speak(`Did you know? ${ffText}`, 'success', 'normal', this.currentChapter.character);
                 break;
 
             case 'quiz':
@@ -857,16 +859,27 @@ class AILearningApp {
         const optionIndex = selectedLetter.charCodeAt(0) - 65;
         const selectedOptionText = currentQuestion.options[optionIndex] || selectedLetter;
 
-        // The original JSON provides 'answer', not 'correct_answer'
-        const correctAnswerText = String(currentQuestion.answer || currentQuestion.correct_answer || '').trim();
-        const optionMatchedText = String(selectedOptionText || '').trim();
-
-        const isCorrect = optionMatchedText === correctAnswerText;
+        // More robust matching: check full text, then check if answer is just the letter
+        const correctAnswerText = String(currentQuestion.answer || currentQuestion.correct_answer || '').trim().toLowerCase();
+        const selectedText = String(selectedOptionText || '').trim().toLowerCase();
+        
+        // Standard check: Does the selected text match the answer text?
+        let isCorrect = selectedText === correctAnswerText;
+        
+        // Fallback check: Did the AI provide the answer as a letter (e.g., "A")?
+        if (!isCorrect && correctAnswerText.length === 1) {
+            isCorrect = selectedLetter.toLowerCase() === correctAnswerText;
+        }
+        
+        // Final fuzzy check: Does the answer text contain the option text or vice versa?
+        if (!isCorrect && correctAnswerText.length > 3) {
+            isCorrect = correctAnswerText.includes(selectedText) || selectedText.includes(correctAnswerText);
+        }
 
         this.quizAnswers.push({
             question: currentQuestion.question,
-            selected: optionMatchedText,
-            correct: correctAnswerText,
+            selected: selectedOptionText,
+            correct: currentQuestion.answer || currentQuestion.correct_answer,
             isCorrect: isCorrect
         });
 
@@ -875,7 +888,7 @@ class AILearningApp {
             this.totalScore += this.currentChapter.score_award.per_quiz_answer;
         }
 
-        this.displayQuizResult(isCorrect, correctAnswerText);
+        this.displayQuizResult(isCorrect, currentQuestion.answer || currentQuestion.correct_answer);
         this.updateTotalScore();
     }
 
@@ -998,40 +1011,38 @@ class AILearningApp {
                 <div class="quiz-result correct">
                     <h4>🎉 Correct!</h4>
                     <p>Great job! You earned ${this.currentChapter.score_award.per_quiz_answer} points!</p>
+                    <p id="quiz-ai-feedback" style="font-style: italic; color: #00b894; margin-top: 10px;"></p>
                 </div>
             `;
 
-            // AI celebrates correct answer
-            if (window.voiceSystem) {
-                let celebration = `Excellent work, ${this.playerName}! That's absolutely correct!`;
-                try {
-                    const dynamicPraise = await this.chapterGenerator.generateDynamicPraise(this.playerName, "getting a quiz question absolutely correct");
-                    if (dynamicPraise) celebration = dynamicPraise;
-                } catch (e) {
-                    console.error("Failed to generate quiz praise:", e);
-                }
-                window.voiceSystem.speak(celebration, 'success');
+            let celebration = `Excellent work, ${this.playerName}! That's absolutely correct!`;
+            try {
+                const dynamicPraise = await this.chapterGenerator.generateDynamicPraise(this.playerName, "getting a quiz question absolutely correct");
+                if (dynamicPraise) celebration = dynamicPraise;
+            } catch (e) {
+                console.error("Failed to generate quiz praise:", e);
             }
+            
+            this.typeSyncWithVoice(celebration, 'quiz-ai-feedback');
+
         } else {
             finalResultContainer.innerHTML = `
                 <div class="quiz-result incorrect">
                     <h4>❌ Not quite!</h4>
                     <p>The correct answer was: <strong>${correctAnswer}</strong></p>
-                    <p>Keep trying, you're learning fast!</p>
+                    <p id="quiz-ai-feedback" style="font-style: italic; color: #e17055; margin-top: 10px;"></p>
                 </div>
             `;
 
-            // AI provides encouraging feedback
-            if (window.voiceSystem) {
-                let encouragement = `That's okay, ${this.playerName}! The correct answer was ${correctAnswer}. Learning is all about trying!`;
-                try {
-                    const dynamicEncourage = await this.chapterGenerator.generateDynamicPraise(this.playerName, "trying really hard but missing a quiz question. Tell them the correct answer is " + correctAnswer);
-                    if (dynamicEncourage) encouragement = dynamicEncourage;
-                } catch (e) {
-                    console.error("Failed to generate quiz encouragement:", e);
-                }
-                window.voiceSystem.speak(encouragement, 'info');
+            let encouragement = `That's okay, ${this.playerName}! The correct answer was ${correctAnswer}. Learning is all about trying!`;
+            try {
+                const dynamicEncourage = await this.chapterGenerator.generateDynamicPraise(this.playerName, "trying really hard but missing a quiz question. Tell them the correct answer is " + correctAnswer);
+                if (dynamicEncourage) encouragement = dynamicEncourage;
+            } catch (e) {
+                console.error("Failed to generate quiz encouragement:", e);
             }
+            
+            this.typeSyncWithVoice(encouragement, 'quiz-ai-feedback');
         }
 
         // Show next question or complete quiz
@@ -1185,17 +1196,31 @@ class AILearningApp {
         }
     }
 
-    typeText(elementId, text, speed = 50) {
+    typeText(elementId, text, speedOrDuration = 50, isDuration = false) {
         const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        // Abort any existing typing on this element
+        if (element._typingInterval) clearInterval(element._typingInterval);
+        
         element.textContent = '';
 
         let i = 0;
-        const typeInterval = setInterval(() => {
+        let speed = speedOrDuration;
+        
+        if (isDuration && speedOrDuration > 0) {
+            // Calculate speed to match duration (duration is in seconds)
+            // We subtract a small buffer (500ms) to ensure text finish slightly before audio
+            const totalMs = Math.max(100, (speedOrDuration * 1000) - 200);
+            speed = totalMs / text.length;
+        }
+
+        element._typingInterval = setInterval(() => {
             if (i < text.length) {
                 element.textContent += text.charAt(i);
                 i++;
             } else {
-                clearInterval(typeInterval);
+                clearInterval(element._typingInterval);
             }
         }, speed);
     }

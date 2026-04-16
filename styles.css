@@ -6,22 +6,28 @@
 }
 
 :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.4);
-    --text-color: #2d3436;
-    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --primary-gradient: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+    --accent-gradient: linear-gradient(135deg, #6c5ce7 0%, #00cec9 100%);
+    --bg-gradient: linear-gradient(to bottom right, #0f0c29, #302b63, #24243e);
+    --glass-bg: rgba(255, 255, 255, 0.08); /* Dark Glass */
+    --light-glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-color: #ffffff;
+    --text-muted: #b2bec3;
+    --shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
     --accent-color: #6c5ce7;
+    --neon-cyan: #00cec9;
     --success-color: #00b894;
     --error-color: #ff7675;
 }
 
 body {
     font-family: 'Comic Neue', cursive;
-    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    background: var(--bg-gradient);
     min-height: 100vh;
     color: var(--text-color);
     overflow-x: hidden;
+    line-height: 1.6;
 }
 
 .app-container {
@@ -45,12 +51,14 @@ body {
 @keyframes premiumFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95) translateY(20px);
+        transform: scale(0.98) translateY(30px);
+        filter: blur(10px);
     }
 
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
+        filter: blur(0);
     }
 }
 
@@ -58,14 +66,14 @@ body {
 .welcome-content {
     text-align: center;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
-    border-radius: 30px;
-    padding: 60px 40px;
+    border-radius: 40px;
+    padding: 80px 40px;
     box-shadow: var(--shadow);
-    max-width: 700px;
-    margin: 40px auto;
+    max-width: 800px;
+    margin: 60px auto;
     position: relative;
     overflow: hidden;
 }
@@ -82,14 +90,15 @@ body {
 }
 
 .app-title {
-    font-size: 3.5em;
-    background: linear-gradient(45deg, #6c5ce7, #00cec9);
+    font-size: 4.5em;
+    background: var(--accent-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 40px;
-    font-weight: 700;
-    letter-spacing: -1px;
+    margin-bottom: 20px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    filter: drop-shadow(0 0 20px rgba(108, 92, 231, 0.3));
 }
 
 /* AI Character Container */
@@ -130,19 +139,49 @@ body {
 .card-buddy-img.talking,
 .header-character-img.talking {
     animation: talkingPulse 0.4s ease-in-out infinite !important;
-    filter: drop-shadow(0 20px 40px rgba(108, 92, 231, 0.4)) !important;
+    filter: drop-shadow(0 0 40px rgba(108, 92, 231, 0.4)) !important;
 }
 
 @keyframes talkingPulse {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.03) translateY(-5px); }
+}
 
-    0%,
-    100% {
-        transform: scale(1) translateY(0);
-    }
+/* Voice Visualizer */
+.voice-visualizer {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 40px;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
 
-    50% {
-        transform: scale(1.05) translateY(-5px);
-    }
+.ai-character.talking .voice-visualizer {
+    display: flex;
+}
+
+.voice-visualizer .bar {
+    width: 6px;
+    height: 15px;
+    background: linear-gradient(to top, #6c5ce7, #00cec9);
+    border-radius: 3px;
+    animation: soundWave 0.8s ease-in-out infinite;
+}
+
+.voice-visualizer .bar:nth-child(1) { animation-delay: 0.1s; }
+.voice-visualizer .bar:nth-child(2) { animation-delay: 0.3s; height: 25px; }
+.voice-visualizer .bar:nth-child(3) { animation-delay: 0.5s; height: 35px; }
+.voice-visualizer .bar:nth-child(4) { animation-delay: 0.2s; height: 20px; }
+.voice-visualizer .bar:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes soundWave {
+    0%, 100% { height: 10px; opacity: 0.6; }
+    50% { height: 35px; opacity: 1; }
 }
 
 /* Robot Legacy Fallback (Hidden) */
@@ -189,17 +228,19 @@ body {
 /* Buttons */
 .primary-btn,
 .section-btn {
-    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    background: var(--accent-gradient);
     color: white;
     border: none;
-    padding: 18px 40px;
-    font-size: 1.3em;
+    padding: 20px 50px;
+    font-size: 1.4em;
     border-radius: 20px;
     cursor: pointer;
     font-family: 'Comic Neue', cursive;
-    font-weight: 700;
+    font-weight: 800;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+    box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .primary-btn:hover,
@@ -252,18 +293,21 @@ body {
 .menu-header {
     text-align: center;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
-    border-radius: 25px;
-    padding: 40px;
-    margin-bottom: 40px;
+    border-radius: 35px;
+    padding: 50px;
+    margin-bottom: 50px;
     box-shadow: var(--shadow);
+    border-bottom: 3px solid var(--neon-cyan);
 }
 
 .menu-header h2 {
-    color: #6c5ce7;
-    font-size: 2.8em;
+    color: var(--neon-cyan);
+    font-size: 3.2em;
     margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .chapters-grid {
@@ -274,25 +318,30 @@ body {
 
 .chapter-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 2px solid transparent;
-    border-radius: 25px;
-    padding: 35px;
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    padding: 40px;
     box-shadow: var(--shadow);
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
 }
 
 .chapter-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    border-color: #6c5ce7;
-    background: white;
-    box-shadow: 0 15px 45px rgba(108, 92, 231, 0.2);
+    transform: translateY(-15px);
+    border-color: var(--neon-cyan);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 60px rgba(0, 206, 201, 0.2);
 }
 
 .chapter-card.completed {
-    border-color: #00b894;
-    background: linear-gradient(135deg, rgba(85, 239, 196, 0.1) 0%, rgba(255, 255, 255, 0.7) 100%);
+    border-color: var(--success-color);
+    background: linear-gradient(135deg, rgba(0, 184, 148, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 
 .card-buddy-img {
@@ -374,11 +423,18 @@ body {
 
 .section {
     background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    border-radius: 30px;
-    padding: 50px;
-    margin-bottom: 30px;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 40px;
+    padding: 60px;
+    margin-bottom: 40px;
     box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .generated-illustration {
@@ -404,23 +460,26 @@ body {
 
 /* Quiz Options */
 .quiz-option {
-    background: rgba(255, 255, 255, 0.5);
-    border: 2px solid transparent;
-    border-radius: 15px;
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 22px;
     margin-bottom: 15px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     text-align: left;
     font-family: inherit;
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: 700;
+    color: white;
 }
 
 .quiz-option:hover {
-    background: white;
-    border-color: #6c5ce7;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--neon-cyan);
+    transform: translateX(10px);
+    box-shadow: 0 0 20px rgba(0, 206, 201, 0.2);
 }
 
 .quiz-option.correct {
@@ -545,15 +604,15 @@ body {
 }
 
 .activity-item-box {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    font-size: 2.5em;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 25px;
+    font-size: 3em;
     cursor: pointer;
     text-align: center;
-    border: 3px solid transparent;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -561,9 +620,10 @@ body {
 }
 
 .activity-item-box:hover {
-    transform: scale(1.08) rotate(3deg);
-    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.2);
-    border-color: rgba(108, 92, 231, 0.3);
+    transform: scale(1.1) rotate(5deg);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 30px rgba(0, 206, 201, 0.4);
 }
 
 .activity-item-box:active {

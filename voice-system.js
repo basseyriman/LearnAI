@@ -87,11 +87,11 @@ class VoiceSystem {
 
         if (nameLower.includes('vision') || nameLower.includes('maya')) {
             this.activeVoice = 'nova';
-        } else if (nameLower.includes('echo') || nameLower.includes('alex')) {
+        } else if (nameLower.includes('echo') || nameLower.includes('alex') || nameLower.includes('astro')) {
             this.activeVoice = 'echo';
-        } else if (nameLower.includes('logic') || nameLower.includes('sam')) {
+        } else if (nameLower.includes('logic') || nameLower.includes('sam') || nameLower.includes('layer') || nameLower.includes('leo')) {
             this.activeVoice = 'onyx';
-        } else if (nameLower.includes('linky') || nameLower.includes('rosa')) {
+        } else if (nameLower.includes('linky') || nameLower.includes('rosa') || nameLower.includes('gaia') || nameLower.includes('green')) {
             this.activeVoice = 'shimmer';
         } else if (nameLower.includes('robo')) {
             this.activeVoice = 'fable';
@@ -147,7 +147,7 @@ class VoiceSystem {
     }
 
     // Text-to-Speech: Make the AI speak using OpenAI
-    async speak(text, type = 'info', priority = 'normal', characterName = '') {
+    async speak(text, type = 'info', priority = 'normal', characterName = '', onStart = null) {
         if (!this.settings.ttsEnabled) {
             console.log('🔊 TTS disabled');
             return Promise.resolve();
@@ -221,6 +221,10 @@ class VoiceSystem {
                 // Play the audio!
                 if (!this.shouldAbortSequences) {
                     try {
+                        // Notify when audio actually starts playing
+                        this.currentAudio.onplay = () => {
+                            if (onStart) onStart(this.currentAudio.duration);
+                        };
                         await this.currentAudio.play();
                     } catch (playError) {
                         console.warn('🔊 Auto-play prevented by browser. User interaction required first.', playError.message || playError.name);
@@ -271,14 +275,18 @@ class VoiceSystem {
 
     // Toggle talking animation on all mascot images
     updateMascotsTalking(isTalking) {
-        const mascots = document.querySelectorAll('.character-img, .card-buddy-img, .header-character-img');
-        mascots.forEach(img => {
-            if (isTalking) {
-                img.classList.add('talking');
-            } else {
-                img.classList.remove('talking');
-            }
-        });
+        const mascotImages = document.querySelectorAll('.character-img, .card-buddy-img, .header-character-img');
+        const containers = document.querySelectorAll('.ai-character');
+        
+        const applyTalking = (elements, active) => {
+            elements.forEach(el => {
+                if (active) el.classList.add('talking');
+                else el.classList.remove('talking');
+            });
+        };
+
+        applyTalking(mascotImages, isTalking);
+        applyTalking(containers, isTalking);
     }
 
     // Voice-to-Text: Start listening
@@ -412,6 +420,13 @@ class VoiceSystem {
         }
 
         if (this.hasWelcomed) return; // Prevent multiple welcomes
+        
+        // Ensure we are on a page with a welcome screen
+        if (!document.getElementById('welcome-screen')) {
+            console.log('🔊 No welcome screen found, skipping welcome sequence');
+            return;
+        }
+
         this.hasWelcomed = true;
 
         console.log('🔊 Starting SMART AI welcome sequence...');
@@ -457,8 +472,7 @@ class VoiceSystem {
         const nameSection = document.querySelector('.name-input-section');
 
         if (!nameInput || !nameSection) {
-            console.warn('🎤 Name input elements not found, retrying...');
-            setTimeout(() => this.enhanceNameInput(), 1000);
+            console.log('🎤 Name input elements not found (probably not on app page). skipping enhancement.');
             return;
         }
 
