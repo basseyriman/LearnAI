@@ -954,7 +954,7 @@ export default function ActivityPackPage() {
 
           {/* Sheet Footer Details */}
           <div className="border-t border-brand-purple/10 pt-6 mt-10 flex flex-col sm:flex-row justify-between items-center text-xs text-brand-purple/40 print:border-none print:mt-4">
-            <span className="font-semibold">© RimanTech Publishing · Young AI Explorers</span>
+            <span className="font-semibold">© RimansTech Publishing · Young AI Explorers</span>
             <span className="font-bold font-serif italic text-brand-gold">A Kid&apos;s Guide to the Future</span>
             <span className="font-mono">Page {currentPage} of {totalPages}</span>
           </div>
