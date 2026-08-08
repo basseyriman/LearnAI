@@ -510,6 +510,7 @@ export default function Home() {
                     { label: "👩‍🏫 Teachers Portal", href: "/dashboard/teacher" },
                     { label: "🏫 School Pilots", href: "/school/pilot" },
                     { label: "📥 Free Resources", href: "/free-resources" },
+                    { label: "✏️ Book 1 Activity Pack", href: "/activity-pack" },
                     { label: "📰 Blog Articles", href: "/blog" },
                     { label: "🌐 Global Communities", href: "/community" },
                   ],

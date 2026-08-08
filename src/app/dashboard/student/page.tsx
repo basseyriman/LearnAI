@@ -1,4 +1,4 @@
-import { PlayCircle, Flame, Medal, Award, Star, Compass, ArrowRight, Globe, Swords, School } from 'lucide-react'
+import { PlayCircle, Flame, Medal, Award, Star, Compass, ArrowRight, Globe, Swords, School, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import OpenAIAssistantButton from '@/components/OpenAIAssistantButton'
@@ -194,6 +194,28 @@ export default async function StudentDashboard() {
                   illustrationUrl: tCustom.illustrationUrl,
                 }))}
               />
+            </div>
+
+            {/* Interactive Activity Packs Section */}
+            <div className="space-y-4 pt-6">
+              <h3 className="font-heading font-bold text-xl text-brand-purple dark:text-brand-cream flex items-center gap-2">
+                <BookOpen className="h-6 w-6 text-brand-gold" strokeWidth={1.5} /> Interactive Activity Packs
+              </h3>
+              <div className="p-6 rounded-2xl border border-brand-gold/25 bg-gradient-to-r from-brand-surface to-brand-warm/20 dark:from-brand-purple-dark/60 dark:to-brand-purple-dark/30 flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between shadow-sm">
+                <div className="space-y-1">
+                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-brand-gold">Book 1 Companion Workbook · 13 Pages</div>
+                  <div className="text-lg font-bold text-brand-purple dark:text-brand-cream">Young AI Explorers Activity Pack</div>
+                  <div className="text-xs text-brand-purple/60 dark:text-brand-cream/60">
+                    Solve crossword puzzles, 15×15 word searches, robot design blueprints, and Mission 1: Invent an AI That Solves a Problem!
+                  </div>
+                </div>
+                <Link
+                  href="/activity-pack"
+                  className="shrink-0 px-5 py-2.5 rounded-full bg-brand-purple dark:bg-brand-gold text-brand-cream dark:text-brand-purple-dark font-bold text-xs hover:opacity-90 transition-all flex items-center gap-2 shadow-sm"
+                >
+                  Start Workbook ➜
+                </Link>
+              </div>
             </div>
 
             {earnedBadges.length > 0 && (

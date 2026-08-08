@@ -129,7 +129,46 @@ export default function FreeResourcesPage() {
           </div>
         </div>
 
-        {/* Resource Grid */}
+        {/* Featured Hero: Activity Pack Book 1 */}
+        {activeCategory === "All" && !search && (
+          <div className="mb-10 p-8 md:p-10 rounded-3xl border border-brand-gold/30 bg-gradient-to-br from-brand-surface to-brand-warm/30 dark:from-brand-purple-dark/80 dark:to-brand-purple-dark/40 shadow-lg relative overflow-hidden">
+            <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between relative z-10">
+              <div className="max-w-2xl space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold text-brand-purple-dark font-extrabold text-[10px] uppercase tracking-widest shadow-sm">
+                  <Sparkles className="h-3 w-3" /> Featured Printable Workbook · 13 Pages
+                </div>
+                <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-brand-purple dark:text-brand-cream leading-tight">
+                  Young AI Explorers Activity Pack <span className="text-brand-gold font-serif italic font-normal">(Book 1)</span>
+                </h2>
+                <p className="text-sm text-brand-purple/70 dark:text-brand-cream/70 leading-relaxed">
+                  13 pages of hands-on review questions, crossword challenges, 15×15 word searches, robot design canvas, and Mission 1: Invent an AI That Solves a Problem. Designed for children ages 9–12.
+                </p>
+                <div className="flex items-center gap-4 text-xs font-semibold text-brand-purple/50 dark:text-brand-cream/50 pt-1">
+                  <span>✏️ Written by Bassey Riman</span>
+                  <span>·</span>
+                  <span>📄 13 Pages</span>
+                  <span>·</span>
+                  <span>🎓 RimansTech Publishing</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0 w-full md:w-auto">
+                <Link
+                  href="/activity-pack"
+                  className="px-6 py-3.5 rounded-full bg-brand-purple dark:bg-brand-gold text-brand-cream dark:text-brand-purple-dark font-bold text-xs hover:opacity-90 transition-all text-center shadow-md flex items-center justify-center gap-2"
+                >
+                  <BookOpen className="h-4 w-4" /> Open Digital Workbook
+                </Link>
+                <Link
+                  href="/activity-pack"
+                  className="px-6 py-3 rounded-full border border-brand-purple/20 dark:border-brand-gold/30 hover:bg-brand-purple/5 text-brand-purple dark:text-brand-cream font-bold text-xs transition-all text-center flex items-center justify-center gap-2"
+                >
+                  <Download className="h-3.5 w-3.5" /> Print / Save PDF
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
         {filteredResources.length === 0 ? (
           <div className="p-16 text-center rounded-2xl border border-dashed border-brand-purple/20 dark:border-brand-gold/20 bg-brand-surface/40">
             <FileText className="h-12 w-12 text-brand-purple/30 dark:text-brand-gold/30 mx-auto mb-4" />
