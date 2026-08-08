@@ -441,32 +441,33 @@ export default function ActivityPackPage() {
                   </div>
                 </div>
 
-                <div className="space-y-6 pt-4">
+                <div className="space-y-5 pt-4">
                   {[
-                    { id: 1, sentence: "________ stands for Artificial Intelligence.", label: "Sentence 1" },
-                    { id: 2, sentence: "AI can ________ from input information and labels.", label: "Sentence 2" },
-                    { id: 3, sentence: "AI models use ________ to make decisions.", label: "Sentence 3" },
-                    { id: 4, sentence: "A ________ is required to run AI models and code.", label: "Sentence 4" },
-                    { id: 5, sentence: "AI helps make many daily devices ________.", label: "Sentence 5" }
+                    { id: 1, before: "", after: " stands for Artificial Intelligence.", label: "1" },
+                    { id: 2, before: "AI can ", after: " from input information and labels.", label: "2" },
+                    { id: 3, before: "AI models use ", after: " to make decisions.", label: "3" },
+                    { id: 4, before: "A ", after: " is required to run AI programs.", label: "4" },
+                    { id: 5, before: "AI helps make many daily devices ", after: ".", label: "5" }
                   ].map((item) => (
-                    <div key={item.id} className="space-y-2">
-                      <label className="text-xs font-extrabold uppercase tracking-wider text-brand-purple/40 block">{item.label}</label>
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm font-medium text-brand-purple/80 shrink-0">{item.id}.</span>
+                    <div key={item.id} className="p-4 rounded-xl border border-brand-purple/5 bg-brand-warm/5">
+                      <div className="flex flex-wrap items-baseline gap-x-1 text-sm font-medium text-brand-purple/85 leading-loose">
+                        <span className="font-extrabold text-brand-purple/40 mr-1">{item.label}.</span>
+                        {item.before && <span>{item.before}</span>}
                         <input
                           type="text"
                           value={p7Answers[item.id] || ""}
                           onChange={(e) => setP7Answers({ ...p7Answers, [item.id]: e.target.value })}
-                          placeholder="Type blank word..."
-                          className="border-b border-brand-purple/20 py-1.5 focus:outline-none focus:border-brand-gold text-sm text-brand-purple font-bold w-48"
+                          placeholder="________"
+                          className="inline-block border-b-2 border-brand-purple/30 focus:border-brand-gold focus:outline-none text-center text-sm font-extrabold text-brand-gold w-28 bg-transparent placeholder:text-brand-purple/20 placeholder:font-normal"
                         />
-                        <span className="text-xs text-brand-purple/50">{item.sentence.replace("________", "")}</span>
+                        {item.after && <span>{item.after}</span>}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
+
 
             {/* PAGE 8: MATCH THE WORDS */}
             {currentPage === 8 && (
