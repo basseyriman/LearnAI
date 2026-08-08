@@ -479,40 +479,50 @@ export default function ActivityPackPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {p9Rows.map((row, idx) => (
-                        <tr key={idx} className="border-b border-brand-purple/5">
-                          <td className="p-2 text-center font-bold text-brand-purple/40">{idx + 1}</td>
-                          <td className="p-2">
-                            <input type="text" value={row.item}
-                              onChange={(e) => {
-                                const newRows = [...p9Rows];
-                                newRows[idx].item = e.target.value;
-                                setP9Rows(newRows);
-                              }}
-                              placeholder="e.g. Smart TV"
-                              className="w-full bg-transparent p-1.5 focus:outline-none border-b border-transparent focus:border-brand-gold font-semibold" />
-                          </td>
-                          <td className="p-2">
-                            <input type="text" value={row.does}
-                              onChange={(e) => {
-                                const newRows = [...p9Rows];
-                                newRows[idx].does = e.target.value;
-                                setP9Rows(newRows);
-                              }}
-                              placeholder="e.g. Recommends shows I like"
-                              className="w-full bg-transparent p-1.5 focus:outline-none border-b border-transparent focus:border-brand-gold font-medium" />
-                          </td>
-                          <td className="p-2 text-center">
-                            <input type="checkbox" checked={row.isAI}
-                              onChange={(e) => {
-                                const newRows = [...p9Rows];
-                                newRows[idx].isAI = e.target.checked;
-                                setP9Rows(newRows);
-                              }}
-                              className="h-4 w-4 rounded border-brand-purple/20 text-brand-gold focus:ring-brand-gold" />
-                          </td>
-                        </tr>
-                      ))}
+                      {p9Rows.map((row, idx) => {
+                        const placeholders = [
+                          { item: "e.g. Robot Vacuum", does: "e.g. Cleans the living room floor automatically" },
+                          { item: "e.g. Smart Speaker", does: "e.g. Answers questions and sets morning alarms" },
+                          { item: "e.g. Smart TV", does: "e.g. Recommends family movies I might like" },
+                          { item: "e.g. Navigation App", does: "e.g. Finds the fastest route around traffic" },
+                          { item: "e.g. Phone Camera", does: "e.g. Focuses automatically on smiling faces" },
+                        ];
+                        const ph = placeholders[idx % placeholders.length];
+                        return (
+                          <tr key={idx} className="border-b border-brand-purple/5">
+                            <td className="p-2 text-center font-bold text-brand-purple/40">{idx + 1}</td>
+                            <td className="p-2">
+                              <input type="text" value={row.item}
+                                onChange={(e) => {
+                                  const newRows = [...p9Rows];
+                                  newRows[idx].item = e.target.value;
+                                  setP9Rows(newRows);
+                                }}
+                                placeholder={ph.item}
+                                className="w-full bg-transparent p-1.5 focus:outline-none border-b border-transparent focus:border-brand-gold font-semibold" />
+                            </td>
+                            <td className="p-2">
+                              <input type="text" value={row.does}
+                                onChange={(e) => {
+                                  const newRows = [...p9Rows];
+                                  newRows[idx].does = e.target.value;
+                                  setP9Rows(newRows);
+                                }}
+                                placeholder={ph.does}
+                                className="w-full bg-transparent p-1.5 focus:outline-none border-b border-transparent focus:border-brand-gold font-medium" />
+                            </td>
+                            <td className="p-2 text-center">
+                              <input type="checkbox" checked={row.isAI}
+                                onChange={(e) => {
+                                  const newRows = [...p9Rows];
+                                  newRows[idx].isAI = e.target.checked;
+                                  setP9Rows(newRows);
+                                }}
+                                className="h-4 w-4 rounded border-brand-purple/20 text-brand-gold focus:ring-brand-gold" />
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
